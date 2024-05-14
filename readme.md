@@ -1,6 +1,7 @@
 # Fleet Soft - In progress..
-
-<img src="logo.png" alt="Fleet Soft Logo" width="200"/>
+<p align="center">
+  <img src="logo.png" alt="Fleet Soft Logo" width="350"/>
+</p>
 
 Fleet Soft is an advanced car rental management software developed using .NET technology. It is a modular monolith application, meaning it consists of various modules that work together but are managed within a single application. Libraries have been specifically created for this application.
 
