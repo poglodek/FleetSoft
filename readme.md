@@ -16,7 +16,7 @@ Fleet Soft is an advanced car rental management software developed using .NET te
 
 ## Domain Discovery Process
 
-The entire domain discovery process of the application was conducted using Domain-Driven Design (DDD) techniques. Detailed information on this process is available on the Miro platform.
+The entire domain discovery process of the application was conducted using Domain-Driven Design (DDD) techniques. Detailed information on this process is available on the [Miro platform.](https://miro.com/app/board/uXjVKGU40IA=/?share_link_id=701087976222) 
 
 ## Project Structure
 
