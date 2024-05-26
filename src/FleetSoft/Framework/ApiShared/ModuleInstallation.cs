@@ -2,47 +2,59 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-
+using Microsoft.Extensions.Logging;
 namespace ApiShared;
 
 public static class ModuleInstallation
 {
-    private static List<ModuleInternal> _modules = new();
+    private static readonly List<ModuleInternal> Modules = new();
     private const char CharToReplace = '"';
-    
+    private static ILogger _logger = null!;
     
     
     public static WebApplicationBuilder InstallModules(this WebApplicationBuilder builder)
     {
-        Console.WriteLine("Installing modules...");
+        CreateLogger();
+        
+        _logger.LogInformation("Installing modules...");
+        
         LoadModules();
 
-        Console.WriteLine($"Modules Found ({_modules.Count})");
+        _logger.LogInformation($"Modules Found ({Modules.Count})");
 
-        Console.WriteLine("Loading configuration...");
+        _logger.LogInformation("Loading configuration...");
         LoadConfiguration(builder);
-        Console.WriteLine($"Configuration loaded.");
+        _logger.LogInformation($"Configuration loaded.");
         
-        Console.WriteLine("Installing services...");
+        _logger.LogInformation("Installing services...");
 
-        foreach (var module in _modules)
+        foreach (var module in Modules)
         {
             if (!module.IsEnabled)
             {
-                Console.WriteLine($"Module '{module.Module.ModuleName}' is disabled. Skipping installation....");
+                _logger.LogInformation($"Module '{module.Module.ModuleName}' is disabled. Skipping installation....");
                 continue;
             }
             
-            Console.WriteLine($"Installing {module.Module.ModuleName} services...");
+            _logger.LogInformation($"Installing {module.Module.ModuleName} services...");
             module.Module.InstallModule(builder.Services);
-            Console.WriteLine($"Services installed for {module.Module.ModuleName}.");
+            _logger.LogInformation($"Services installed for {module.Module.ModuleName}.");
         }
 
-        Console.WriteLine("Services installed.");
-        
+        _logger.LogInformation("Services installed.");
+       
         return builder;
     }
-    
+
+    private static void CreateLogger()
+    {
+        _logger = LoggerFactory.Create(x =>
+        {
+            x.AddConsole();
+            x.AddDebug();
+        }).CreateLogger("ModuleInstallation");
+    }
+
     private static void LoadModules()
     {
         var types = Assembly.GetExecutingAssembly()
@@ -68,7 +80,7 @@ public static class ModuleInstallation
             var configuration = ReadConfiguration(module);
             var enabled = CheckIfModuleIsEnabled(configuration);
             
-            _modules.Add(new ModuleInternal(module,enabled,configuration));
+            Modules.Add(new ModuleInternal(module,enabled,configuration));
         }
     }
 
@@ -87,7 +99,7 @@ public static class ModuleInstallation
     {
         var configBuilder = new ConfigurationBuilder();
         
-        foreach (var module in _modules.Where(x=>x.IsEnabled))
+        foreach (var module in Modules.Where(x=>x.IsEnabled))
         {
             configBuilder.AddJsonFile(module.Configuration);
         }
@@ -111,16 +123,16 @@ public static class ModuleInstallation
 
     public static WebApplication UseModules(this WebApplication builder)
     {
-        foreach (var module in _modules.Where(x=>x.IsEnabled))
+        foreach (var module in Modules.Where(x=>x.IsEnabled))
         {
-            Console.WriteLine($"Installing {module.Module.ModuleName}...");
+            _logger.LogInformation($"Installing {module.Module.ModuleName}...");
             module.Module.InstallModule(builder);
 
-            Console.WriteLine($"Adding endpoints for {module.Module.ModuleName}...");
+            _logger.LogInformation($"Adding endpoints for {module.Module.ModuleName}...");
             module.Module.AddEndPoints(builder.MapGroup(module.Module.ModuleName));
         }
 
-        Console.WriteLine("Modules installed complete!");
+        _logger.LogInformation("Modules installed complete!");
         
         
         return builder;
