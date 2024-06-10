@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Vehicle.Shared;
 
-public class VehicleModule : IModule
+file class VehicleModule : IModule
 {
     public string ModuleName => "Vehicle";
     public IServiceCollection InstallModule(IServiceCollection services)

@@ -1,3 +1,6 @@
 {
-  "Enabled": true
+  "Enabled": true,
+  "ConnectionStrings": {
+    "Vehicle": ""
+  }
 }
