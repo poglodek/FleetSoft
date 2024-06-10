@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -57,11 +58,14 @@ public static class ModuleInstallation
 
     private static void LoadModules()
     {
-        var types = Assembly.GetExecutingAssembly()
-            .GetTypes()
+        var assemblies = ReturnAssemblies();
+
+        var types = assemblies.SelectMany(x=>x.GetTypes())
             .Where(x => x.GetInterfaces()
                             .Contains(typeof(IModule)) 
-                        && x is { IsInterface: false, IsAbstract: false, IsClass: true }).ToList();
+                        && x is { IsInterface: false, IsAbstract: false, IsClass: true }
+                        ).ToList();
+        
         
         
         foreach (var type in types)
@@ -80,28 +84,46 @@ public static class ModuleInstallation
             var configuration = ReadConfiguration(module);
             var enabled = CheckIfModuleIsEnabled(configuration);
             
-            Modules.Add(new ModuleInternal(module,enabled,configuration));
+            Modules.Add(new ModuleInternal(module, enabled, configuration, GetConfigPathFile(module)));
         }
+    }
+
+    private static IEnumerable<Assembly> ReturnAssemblies()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+        var locations = assemblies.Where(x => !x.IsDynamic).Select(x => x.Location).ToArray();
+        var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
+            .Where(x => !locations.Contains(x, StringComparer.InvariantCultureIgnoreCase))
+            .ToList();
+        files.ForEach(x => assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(x))));
+        return assemblies;
     }
 
     private static string ReadConfiguration(IModule module)
     {
-        var moduleConfigName = $"module.{module.ModuleName}.json";
-        if (!File.Exists(moduleConfigName))
+        var configPathFile = GetConfigPathFile(module);
+        if (!File.Exists(configPathFile))
         {
             throw new FileNotFoundException($"Configuration file for module {module.ModuleName} not found.");
         } 
             
-        return File.ReadAllText(moduleConfigName);
+        return File.ReadAllText(configPathFile);
     }
-    
+
+    private static string GetConfigPathFile(IModule module)
+    {
+        var moduleConfigName = $"module.{module.ModuleName}.json";
+        var configPathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, moduleConfigName);
+        return configPathFile;
+    }
+
     private static void LoadConfiguration(WebApplicationBuilder builder)
     {
         var configBuilder = new ConfigurationBuilder();
         
         foreach (var module in Modules.Where(x=>x.IsEnabled))
         {
-            configBuilder.AddJsonFile(module.Configuration);
+            configBuilder.AddJsonFile(module.Path, optional: false, reloadOnChange: true);
         }
 
         var config =  configBuilder.Build();
@@ -110,10 +132,15 @@ public static class ModuleInstallation
 
     private static bool CheckIfModuleIsEnabled(string fileContent)
     {
-        var fileConfig = JsonSerializer.Deserialize<Dictionary<string, string>>(fileContent);
+        var jsonObject = JsonNode.Parse(fileContent)!.AsObject();
+        var fileConfig = new Dictionary<string, string>();
         
-        return fileConfig is not null
-               && fileConfig.TryGetValue("Enabled", out var value) 
+        foreach (var item in jsonObject)
+        {
+            fileConfig.Add(item.Key, item.Value!.ToString().Replace(CharToReplace.ToString(), ""));
+        }
+        
+        return fileConfig.TryGetValue("Enabled", out var value) 
                && !string.IsNullOrWhiteSpace(value) 
                && value.Equals("true".Replace(CharToReplace.ToString(),""), StringComparison.InvariantCultureIgnoreCase);
     }

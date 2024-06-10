@@ -8,7 +8,7 @@ public interface IModule
 {
     public string ModuleName { get; }
     IServiceCollection InstallModule(IServiceCollection services);
-    public IEndpointRouteBuilder AddEndPoints(IEndpointRouteBuilder services);
+    public IEndpointRouteBuilder AddEndPoints(IEndpointRouteBuilder endpointRoute);
     public IApplicationBuilder InstallModule(IApplicationBuilder app);
     
 }
