@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{E1585A25-C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{5EDFD7C0-A3B1-4729-A30A-B38725070145}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dal.PostgreSql", "Framework\Dal.PostgreSql\Dal.PostgreSql.csproj", "{447229A0-01A0-45B1-BBB1-9AE02AB9C3A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dal.Postgres", "Framework\Dal.Postgres\Dal.Postgres.csproj", "{447229A0-01A0-45B1-BBB1-9AE02AB9C3A3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Kafka", "Framework\Messaging.Kafka\Messaging.Kafka.csproj", "{692BA27F-7524-433B-B043-FE589E6A5FAB}"
 EndProject
