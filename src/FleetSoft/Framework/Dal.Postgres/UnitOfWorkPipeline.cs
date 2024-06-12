@@ -12,7 +12,7 @@ internal sealed class UnitOfWorkPipeline<TRequest, TResponse> : IPipelineBehavio
     private readonly IMediator _mediator;
     private readonly ILogger<UnitOfWorkPipeline<TRequest, TResponse>> _logger;
 
-    public UnitOfWorkPipeline(IUnitOfWork unitOfWork, IMediator mediator, ILogger<UnitOfWorkPipeline<TRequest, TResponse>> logger)
+    internal UnitOfWorkPipeline(IUnitOfWork unitOfWork, IMediator mediator, ILogger<UnitOfWorkPipeline<TRequest, TResponse>> logger)
     {
         _unitOfWork = unitOfWork;
         _mediator = mediator;
@@ -26,7 +26,7 @@ internal sealed class UnitOfWorkPipeline<TRequest, TResponse> : IPipelineBehavio
         if (typeof(TRequest).Name.EndsWith("Command",StringComparison.InvariantCultureIgnoreCase))
         {
             var domainEvents = _unitOfWork.GetChangeTracker().Entries<Entity>()
-                .Select(x => x.Entity as Entity)
+                .Select(x => x.Entity)
                 .SelectMany(x => x.DomainEvents)
                 .ToList();
 

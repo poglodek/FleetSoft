@@ -23,7 +23,6 @@ public static class Extensions
         });
 
         builder.Services.AddScoped<IUnitOfWork, T>();
-        
         builder.Services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
