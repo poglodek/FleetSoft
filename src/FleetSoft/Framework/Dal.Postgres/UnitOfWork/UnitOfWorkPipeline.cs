@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Shared.Core;
 
-namespace Dal.Postgres;
+namespace Dal.Postgres.UnitOfWork;
 
 internal sealed class UnitOfWorkPipeline<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

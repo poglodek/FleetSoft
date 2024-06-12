@@ -3,7 +3,7 @@ using MediatR;
 using Messaging.Kafka.Attributes;
 using Shared.Core;
 
-namespace Messaging.Kafka;
+namespace Messaging.Kafka.Handlers;
 
 internal class DomainEventHandler<TDomainEvent> : INotificationHandler<TDomainEvent> where TDomainEvent : IDomainEvent
 {

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Dal.Postgres.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

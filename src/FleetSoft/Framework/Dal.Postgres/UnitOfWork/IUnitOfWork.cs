@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Dal.Postgres;
+namespace Dal.Postgres.UnitOfWork;
 
 public interface IUnitOfWork
 {
