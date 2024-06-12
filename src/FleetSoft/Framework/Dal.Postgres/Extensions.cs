@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +8,7 @@ namespace Dal.Postgres;
 
 public static class Extensions
 {
-    public static WebApplicationBuilder AddDatabase<T>(this WebApplicationBuilder builder, string connectionStringName) where T: DbContext
+    public static WebApplicationBuilder AddDatabase<T>(this WebApplicationBuilder builder, string connectionStringName) where T: DbContext, IUnitOfWork
     {
         var connectionString = builder.Configuration.GetConnectionString(connectionStringName);
         
@@ -21,6 +22,13 @@ public static class Extensions
             x.UseNpgsql(connectionString);
         });
 
+        builder.Services.AddScoped<IUnitOfWork, T>();
+        
+        builder.Services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            cfg.AddOpenBehavior(typeof(UnitOfWorkPipeline<,>));
+        });
 
         return builder;
     }

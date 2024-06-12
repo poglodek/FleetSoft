@@ -15,7 +15,7 @@ file class VehicleModule : IModule
 
     public IEndpointRouteBuilder AddEndPoints(IEndpointRouteBuilder endpointRoute)
     {
-        endpointRoute.MapGet("/", () => $"Vehicle Module {DateTimeOffset.Now}");
+        
 
         return endpointRoute;
     }
