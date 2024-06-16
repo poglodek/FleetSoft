@@ -4,11 +4,9 @@ using Shared.Core;
 
 namespace Shared.Application.Events;
 
-internal class DomainApplicationEventMapper<TDomainEvent>(IMediator mediator) : INotificationHandler<TDomainEvent>
+internal class DomainApplicationEventMapper<TDomainEvent>(IPublisher mediator) : INotificationHandler<TDomainEvent>
     where TDomainEvent : IDomainEvent
 {
-    private readonly IMediator _mediator = mediator;
-
     public Task Handle(TDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var applicationEvent = (ApplicationEvent<TDomainEvent>)Activator.CreateInstance(typeof(ApplicationEvent<>).MakeGenericType(domainEvent.GetType()), domainEvent);
@@ -18,6 +16,6 @@ internal class DomainApplicationEventMapper<TDomainEvent>(IMediator mediator) : 
             throw new InvalidOperationException($"Could not create ApplicationEvent based on DomainEvent ({domainEvent.GetType().Name})");
         }
         
-        return _mediator.Publish(applicationEvent, cancellationToken);
+        return mediator.Publish(applicationEvent, cancellationToken);
     }
 }
