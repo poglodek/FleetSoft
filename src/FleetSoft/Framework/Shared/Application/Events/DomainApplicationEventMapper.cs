@@ -5,7 +5,7 @@ using Shared.Core;
 namespace Shared.Application.Events;
 
 internal class DomainApplicationEventMapper<TDomainEvent>(IPublisher mediator) : INotificationHandler<TDomainEvent>
-    where TDomainEvent : IDomainEvent
+    where TDomainEvent : class, IDomainEvent
 {
     public Task Handle(TDomainEvent domainEvent, CancellationToken cancellationToken)
     {

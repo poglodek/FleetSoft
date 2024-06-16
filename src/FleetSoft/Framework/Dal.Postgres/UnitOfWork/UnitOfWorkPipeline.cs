@@ -1,4 +1,7 @@
+using System.Data;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Shared.Core;
 
@@ -21,30 +24,67 @@ internal sealed class UnitOfWorkPipeline<TRequest, TResponse> : IPipelineBehavio
     
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var response = await next();
+        var isCommandRequest = typeof(TRequest).Name.EndsWith("Command", StringComparison.InvariantCultureIgnoreCase);
         
-        if (typeof(TRequest).Name.EndsWith("Command",StringComparison.InvariantCultureIgnoreCase))
+        if (!isCommandRequest)
         {
-            var domainEvents = _unitOfWork.GetChangeTracker().Entries<Entity>()
-                .Select(x => x.Entity)
-                .SelectMany(x => x.DomainEvents)
-                .ToList();
-
-            _logger.LogDebug("Publishing domain events ({domainEventsCount})...", domainEvents.Count);
+            return await next();
             
-            foreach (var @domainEvent in domainEvents)
-            {
-                await _mediator.Publish(@domainEvents, cancellationToken);
-            }
-            
-            _logger.LogDebug("Saving changes...");
-            
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
-            _logger.LogDebug("Saved changes.");
         }
 
-        return response;
+        IDbContextTransaction transaction = null;
+        
+        try
+        {
+            transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            
+            var response = await next();
+                
+            var domainEvents = ReturnDomainEvents();
 
+            _logger.LogDebug("Publishing domain events ({domainEventsCount})...", domainEvents.Count);
+
+            await PublishEvents(cancellationToken, domainEvents);
+
+            _logger.LogDebug("Saving changes...");
+
+            await SaveChangesAsync(cancellationToken, transaction);
+
+            _logger.LogDebug("Saved changes.");
+
+            return response;
+        }
+        catch (Exception e)
+        {
+            await transaction!.RollbackAsync(cancellationToken);
+                
+            _logger.LogError(e, "An error occurred while saving changes.");
+
+            throw;
+        }
+        
+
+    }
+
+    private List<IDomainEvent> ReturnDomainEvents()
+    {
+        return _unitOfWork.GetChangeTracker().Entries<Entity>()
+            .Select(x => x.Entity)
+            .SelectMany(x => x.DomainEvents)
+            .ToList();
+    }
+
+    private async Task PublishEvents(CancellationToken cancellationToken, List<IDomainEvent> domainEvents)
+    {
+        foreach (var @domainEvent in domainEvents)
+        {
+            await _mediator.Publish(@domainEvent, cancellationToken);
+        }
+    }
+
+    private async Task SaveChangesAsync(CancellationToken cancellationToken, IDbContextTransaction? transaction)
+    {
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await transaction?.CommitAsync(cancellationToken)!;
     }
 }
