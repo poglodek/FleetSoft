@@ -7,6 +7,6 @@ public static class Extensions
 {
     public static IServiceCollection AddKafka(this IServiceCollection services, IConfiguration configuration)
     { 
-        return services;
+          return services;
     }
 }
