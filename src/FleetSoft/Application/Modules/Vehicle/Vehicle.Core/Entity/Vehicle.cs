@@ -11,8 +11,16 @@ public class Vehicle : Shared.Core.Entity
     public LicensePlate LicensePlate { get; private set; }
     public ProductionYear ProductionYear { get; private set; }
     public Mileage Mileage { get; private set; }
+    
+    
+    private Vehicle(){}
     public Vehicle(Guid id ,Brand brand, Model model, VehicleType vehicleType,LicensePlate licensePlate, ProductionYear productionYear, Mileage mileage)
     {
+        if (id == Guid.Empty)
+        {
+            id = Guid.NewGuid();
+        }
+        
         Id = id;
         Brand = brand;
         Model = model;
@@ -21,6 +29,7 @@ public class Vehicle : Shared.Core.Entity
         ProductionYear = productionYear;
         Mileage = mileage;
     }
+    
 
     
 }
