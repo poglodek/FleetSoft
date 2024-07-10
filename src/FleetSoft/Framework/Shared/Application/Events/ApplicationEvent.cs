@@ -7,7 +7,7 @@ public abstract class ApplicationEvent<TDomainEvent> : INotification where TDoma
 {
     protected TDomainEvent DomainEvent { get; }
 
-    protected ApplicationEvent(TDomainEvent domainEvent)
+    public ApplicationEvent(TDomainEvent domainEvent)
     {
         DomainEvent = domainEvent;
     }
