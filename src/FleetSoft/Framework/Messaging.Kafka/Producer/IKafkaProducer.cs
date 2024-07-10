@@ -1,6 +1,6 @@
 namespace Messaging.Kafka.Producer;
 
-public interface IKafkaProducer
+internal interface IKafkaProducer
 {
-    
+    Task ProduceAsync(string topic, string message, CancellationToken ct = default);
 }
