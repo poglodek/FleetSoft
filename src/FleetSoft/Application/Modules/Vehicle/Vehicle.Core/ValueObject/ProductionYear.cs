@@ -1,3 +1,5 @@
+using Vehicle.Core.Exceptions;
+
 namespace Vehicle.Core.ValueObject;
 
 public record ProductionYear
@@ -6,9 +8,9 @@ public record ProductionYear
     
     public ProductionYear(int year)
     {
-        if (year < 1900 || year > DateTime.Now.Year)
+        if (year is < 1900 or > 2030)
         {
-            throw new ArgumentException("Invalid production year");
+            throw new InvalidYearException("Invalid production year");
         }
 
         Year = year;
