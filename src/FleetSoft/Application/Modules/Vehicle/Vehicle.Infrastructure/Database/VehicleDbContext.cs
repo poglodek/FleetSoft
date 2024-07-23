@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Vehicle.Infrastructure.Database;
 
-public class VehicleDbContext : DbContext, IUnitOfWork
+internal class VehicleDbContext : DbContext, IUnitOfWork
 {
     /// <inheritdoc />
     public VehicleDbContext(DbContextOptions options) : base(options)
