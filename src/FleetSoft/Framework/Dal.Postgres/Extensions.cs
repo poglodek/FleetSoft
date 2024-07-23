@@ -9,11 +9,11 @@ namespace Dal.Postgres;
 
 public static class Extensions
 {
-    public static WebApplicationBuilder AddDatabase<T>(this WebApplicationBuilder builder, string connectionStringName) where T: DbContext, IUnitOfWork
+    public static IServiceCollection AddDatabase<T>(this IServiceCollection serviceCollection, IConfiguration configuration ,string connectionStringName) where T: DbContext, IUnitOfWork
     {
-        var connectionString = builder.Configuration.GetConnectionString(connectionStringName);
+        var connectionString = configuration.GetConnectionString(connectionStringName);
         
-        builder.Services.AddDbContext<T>(x =>
+        serviceCollection.AddDbContext<T>(x =>
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -23,14 +23,14 @@ public static class Extensions
             x.UseNpgsql(connectionString);
         });
 
-        builder.Services.AddScoped<IUnitOfWork, T>();
-        builder.Services.AddMediatR(cfg =>
+        serviceCollection.AddScoped<IUnitOfWork, T>();
+        serviceCollection.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             cfg.AddOpenBehavior(typeof(UnitOfWorkPipeline<,>));
         });
 
-        return builder;
+        return serviceCollection;
     }
 
     public static WebApplication UseMigration<T>(this WebApplication application) where T: DbContext

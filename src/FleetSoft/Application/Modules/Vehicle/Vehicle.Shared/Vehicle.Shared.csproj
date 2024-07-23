@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\Framework\ApiShared\ApiShared.csproj" />
+      <ProjectReference Include="..\..\..\..\Framework\Dal.Postgres\Dal.Postgres.csproj" />
+      <ProjectReference Include="..\Vehicle.Infrastructure\Vehicle.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

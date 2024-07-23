@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Framework\ApiShared\ApiShared.csproj" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Framework\Dal.Postgres\Dal.Postgres.csproj" />
+      <ProjectReference Include="..\Vehicle.Core\Vehicle.Core.csproj" />
+    </ItemGroup>
+
 </Project>

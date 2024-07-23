@@ -38,7 +38,7 @@ public static class ModuleInstallation
             }
             
             _logger.LogInformation($"Installing {module.Module.ModuleName} services...");
-            module.Module.InstallModule(builder.Services);
+            module.Module.InstallModule(builder.Services, builder.Configuration);
             _logger.LogInformation($"Services installed for {module.Module.ModuleName}.");
         }
 
