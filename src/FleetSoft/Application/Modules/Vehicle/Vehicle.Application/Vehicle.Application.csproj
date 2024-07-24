@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Command\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Vehicle.Core\Vehicle.Core.csproj" />
     </ItemGroup>
 
