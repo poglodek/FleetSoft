@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\Framework\Dal.Postgres\Dal.Postgres.csproj" />
+      <ProjectReference Include="..\Vehicle.Application\Vehicle.Application.csproj" />
       <ProjectReference Include="..\Vehicle.Core\Vehicle.Core.csproj" />
     </ItemGroup>
 
