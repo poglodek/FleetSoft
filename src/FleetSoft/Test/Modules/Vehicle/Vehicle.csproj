@@ -25,4 +25,8 @@
       <ProjectReference Include="..\..\..\Application\Modules\Vehicle\Vehicle.Core\Vehicle.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Application\" />
+    </ItemGroup>
+
 </Project>
