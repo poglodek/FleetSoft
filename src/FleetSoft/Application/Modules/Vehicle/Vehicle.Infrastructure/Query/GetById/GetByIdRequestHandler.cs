@@ -6,7 +6,7 @@ using VehicleNotFoundException = Vehicle.Infrastructure.Exceptions.VehicleNotFou
 
 namespace Vehicle.Infrastructure.Query.GetById;
 
-internal class GetByIdRequestHandler(IVehicleRepository vehicleRepository) : IRequestHandler<GetByIdRequest, VehicleDto>
+public class GetByIdRequestHandler(IVehicleRepository vehicleRepository) : IRequestHandler<GetByIdRequest, VehicleDto>
 {
     
     public async Task<VehicleDto> Handle(GetByIdRequest request, CancellationToken cancellationToken)
