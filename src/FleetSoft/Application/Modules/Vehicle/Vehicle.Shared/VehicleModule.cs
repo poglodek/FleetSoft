@@ -10,6 +10,7 @@ using Vehicle.Application.Command.AddMileage;
 using Vehicle.Application.Command.CreateVehicle;
 using Vehicle.Application.Command.SetArchive;
 using Vehicle.Infrastructure;
+using Vehicle.Infrastructure.Query.GetAll;
 using Vehicle.Infrastructure.Query.GetById;
 
 namespace Vehicle.Shared;
@@ -29,6 +30,13 @@ file class VehicleModule : IModule
         endpointRoute.MapGet("/{id}", async (Guid id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetByIdRequest(id));
+
+            return Results.Ok(result);
+        });
+        
+        endpointRoute.MapGet("/", async ( IMediator mediator) =>
+        {
+            var result = await mediator.Send(new GetAllRequest());
 
             return Results.Ok(result);
         });

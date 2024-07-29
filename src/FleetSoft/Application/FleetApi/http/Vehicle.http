@@ -22,3 +22,6 @@ PUT {{URL}}/@ID/Mileage?value=1000
 
 ### Set Vehicle as Archive
 PUT {{URL}}/@ID/Archive
+
+### GET All Vehicles
+GET {{URL}}

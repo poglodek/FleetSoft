@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Shared.Core;
+using Vehicle.Core.Dto;
 using Vehicle.Core.Repositories;
 using Vehicle.Infrastructure.Database;
 
@@ -17,4 +18,7 @@ internal class VehicleRepository(VehicleDbContext dbContext) : IVehicleRepositor
 
     public Task<Core.Entity.Vehicle?> GetByIdAsync(Id id, CancellationToken cancellationToken = default) 
         => dbContext.Vehicles.FirstOrDefaultAsync(x => x.Id.Value == id.Value, cancellationToken);
+
+    public async Task<IReadOnlyCollection<VehicleId>> GetAll(CancellationToken cancellationToken = default)
+        => await dbContext.Vehicles.Where(x => !x.Archived.Value).Select(x=> new VehicleId(x.Id.Value)).ToListAsync(cancellationToken);
 }
