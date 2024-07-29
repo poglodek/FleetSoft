@@ -1,0 +1,24 @@
+@URL = https://localhost:5001/api/vehicle
+@ID = c622cff1-ffb1-4118-acc8-d852c506609e
+
+### POST Create Vehicle
+POST {{URL}}
+Content-Type: application/json
+
+{
+  "Brand": "Porsche",
+  "Model": "911 GT3 RS",
+  "VehicleType": "Car",
+  "LicensePlate": "SK 911",
+  "ProductionYear": 2024
+}
+
+
+### GET  Vehicle by Id
+GET {{URL}}/@ID
+
+### Add mileage to Vehicle
+PUT {{URL}}/@ID/Mileage?value=1000
+
+### Set Vehicle as Archive
+PUT {{URL}}/@ID/Archive

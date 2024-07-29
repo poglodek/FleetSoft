@@ -156,7 +156,7 @@ public static class ModuleInstallation
             module.Module.InstallModule(builder);
 
             _logger.LogInformation($"Adding endpoints for {module.Module.ModuleName}...");
-            module.Module.AddEndPoints(builder.MapGroup(module.Module.ModuleName));
+            module.Module.AddEndPoints(builder.MapGroup($"api/{module.Module.ModuleName}"));
         }
 
         _logger.LogInformation("Modules installed complete!");
